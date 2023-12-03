@@ -30,6 +30,20 @@ Here's an example of a node:
     "is_video": false
 }
 ```
+
+- `instant_trigger`: A dictionary where the keys are the names of the states and the values are the values that trigger this node. When a state reaches the specified value, this node will be played instantly.
+
+Here's an example of a node with an `instant_trigger`:
+
+```json
+"instant_trigger_node": {
+  "media_path": "assets/example/instant_trigger.mp4",
+  "choices": {"Home": "home_node"},
+  "instant_trigger": {"energy": 10},
+  "is_video": true
+}
+```
+
 ## Using Nodes
 
 The game starts with the `intro_node`. From there, the player can make choices that lead to other nodes. The choices are defined in the `choices` attribute of each node.

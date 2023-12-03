@@ -52,5 +52,11 @@
     "media_path": "",
     "choices": {},
     "is_video": false
+  },
+  "instant_trigger_node": {
+    "media_path": "assets/example/intro.mp4",
+    "choices": {"Home": "home_node"},
+    "instant_trigger": {"energy": 7},
+    "is_video": true
   }
 }

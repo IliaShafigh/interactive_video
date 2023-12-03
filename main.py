@@ -35,14 +35,13 @@ class GameState:
 
 
 class Node:
-    def __init__(self, media_path, choices, conditions=None, is_video=True, state_actions=None):
+    def __init__(self, media_path, choices, conditions=None, is_video=True, state_actions=None, instant_trigger=None):
         self.media_path = media_path
         self.choices = choices
         self.conditions = conditions if conditions else {}
         self.is_video = is_video
-        # state_actions is a dict with keys 'set', 'increase', 'decrease', each having a dict of state_name: value
         self.state_actions = state_actions if state_actions else {'set': {}, 'increase': {}, 'decrease': {}}
-
+        self.instant_trigger = instant_trigger if instant_trigger else {}  # New attribute
 
 
 
@@ -135,38 +134,39 @@ class Game:
                 if node == self.current_node:
                     self.node_history.append(key)
                     break
-        # Neue Logik für GameState-Änderungen
+
         node = self.nodes[new_node_key]
 
-        # Überprüfen und Anwenden der 'set' Aktionen
+        # Check and apply 'set' actions
         if 'set' in node.state_actions:
             for state_name, value in node.state_actions['set'].items():
                 self.game_state.set_state(state_name, value)
 
-        # Überprüfen und Anwenden der 'increase' Aktionen
+        # Check and apply 'increase' actions
         if 'increase' in node.state_actions:
             for state_name, value in node.state_actions['increase'].items():
                 self.game_state.increase_state(state_name, value)
 
-        # Überprüfen und Anwenden der 'decrease' Aktionen
+        # Check and apply 'decrease' actions
         if 'decrease' in node.state_actions:
             for state_name, value in node.state_actions['decrease'].items():
                 self.game_state.decrease_state(state_name, value)
+
+        # Check if any node is triggered by the new state values
+        for state_name, value in self.game_state.states.items():
+            for node_key, node in self.nodes.items():
+                if state_name in node.instant_trigger and node.instant_trigger[state_name] == value:
+                    new_node_key = node_key
+                    break
 
         self.current_node = self.nodes[new_node_key]
         self.ui_manager.clear_and_reset()
         self.video_played = False
 
-        # Remove the automatic redirection for nodes with only one choice
-        # if len(self.current_node.choices) == 1 and not going_back:
-        #     next_node_key = list(self.current_node.choices.values())[0]
-        #     self.set_game_state(next_node_key)
-        # else:
         if not self.current_node.is_video:
             # For image nodes, show the choices immediately
             self.show_choices(self.current_node.choices)
-        # No further action required, wait for video end
-
+            
     def show_choices(self, choices):
         button_y = self.screen_height - 100
         button_height = 50
