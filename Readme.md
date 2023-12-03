@@ -1,4 +1,3 @@
-```markdown
 # Interactive Video Game Documentation
 
 This document provides a guide on how to create and use nodes in the interactive video game.
