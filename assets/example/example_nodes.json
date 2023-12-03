@@ -1,0 +1,56 @@
+{
+  "intro_node": {
+    "media_path": "assets/example/intro.mp4",
+    "choices": {"Home": "home_node"},
+    "is_video": true
+  },
+  "home_node": {
+    "media_path": "assets/example/home.jpg",
+    "choices": {"Video": "video_node", "Picture": "picture_node", "Example": "example_node", "Quit": "quit"},
+    "state_actions": {"set": {"energy": 3, "mood": 3, "alcohol": 3}},
+    "is_video": false
+  },
+  "video_node": {
+    "media_path": "assets/example/1080p60_3sec.mp4",
+    "choices": {"Home": "home_node"},
+    "is_video": true
+  },
+  "picture_node": {
+    "media_path": "assets/example/icon.jpg",
+    "choices": {"Example": "example_node", "Picture": "picture_node", "Home": "home_node"},
+    "state_actions": {"increase": {"mood": 1}},
+    "is_video": false
+  },
+  "example_node": {
+    "media_path": "assets/example/untitled.jpeg",
+    "choices": {"Energy == 5": "test1_node", "Energy > 5": "test2_node", "Mood > 5": "test3_node", "Mood == 5": "test4_node", "Example": "example_node", "Picture": "picture_node", "Home": "home_node"},
+    "conditions": {
+      "Energy == 5": ["energy", "==", 5],
+      "Energy > 5": ["energy", ">", 5],
+      "Mood > 5": ["mood", ">", 5],
+      "Mood == 5": ["mood", "==", 5]
+    },
+    "state_actions": {"increase": {"energy": 1}},
+    "is_video": false
+  },
+  "test1_node": {
+    "media_path": "assets/example/slip_die.mp4",
+    "choices": {"Home": "home_node", "Example": "example_node"},
+    "is_video": true
+  },
+  "test2_node": {
+    "media_path": "assets/example/fight.mp4",
+    "choices": {"Home": "home_node"},
+    "is_video": true
+  },
+  "test3_node": {
+    "media_path": "assets/example/voiceover.mp4",
+    "choices": {"Home": "home_node"},
+    "is_video": true
+  },
+  "quit": {
+    "media_path": "",
+    "choices": {},
+    "is_video": false
+  }
+}

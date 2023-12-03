@@ -3,52 +3,54 @@ import pygame_gui
 from moviepy.editor import VideoFileClip
 import sys
 import threading
+import json
 
-
+# nodepath = "node.json"
+nodepath = "assets/example/example_nodes.json"
 class GameState:
     def __init__(self):
         self.states = {
-            'replay_count': {},
-            'voiceover_played': False
+            'energy': 0,  # Example of a numeric state
+            'mood': 0,
+            'alcohol': 0
+            # Add other states as needed
         }
 
-    def increase_replay_count(self, node_key):
-        self.states['replay_count'][node_key] = self.states['replay_count'].get(node_key, 0) + 1
-        print(self.states['replay_count'])
-        print(self.states['voiceover_played'])
+    def set_state(self, state_name, value):
+        self.states[state_name] = value
 
-    def check_replay_count(self, node_key, count):
-        print(self.states['voiceover_played'])
-        return self.states['replay_count'].get(node_key, 0) >= count
+    def get_state(self, state_name):
+        return self.states.get(state_name)
 
-    def set_voiceover_played(self, played):
-        self.states['voiceover_played'] = played
-        print(self.states['replay_count'])
-        print(self.states['voiceover_played'])
+    def increase_state(self, state_name, amount):
+        if state_name in self.states:
+            self.states[state_name] += amount
 
-    def is_voiceover_played(self):
-        print(self.states['replay_count'])
-        print(self.states['voiceover_played'])
-        return self.states['voiceover_played']
+    def decrease_state(self, state_name, amount):
+        if state_name in self.states:
+            self.states[state_name] -= amount
 
-    def reset_state(self):
-        self.states = {key: {} for key in self.states}
-        print(self.states['replay_count'])
-        print(self.states['voiceover_played'])
+    def check_state(self, state_name, condition):
+        return condition(self.get_state(state_name))
 
 
 class Node:
-    def __init__(self, media_path, choices, is_video=True):
+    def __init__(self, media_path, choices, conditions=None, is_video=True, state_actions=None):
         self.media_path = media_path
         self.choices = choices
-        self.is_video = is_video  # True for videos, False for pictures
+        self.conditions = conditions if conditions else {}
+        self.is_video = is_video
+        # state_actions is a dict with keys 'set', 'increase', 'decrease', each having a dict of state_name: value
+        self.state_actions = state_actions if state_actions else {'set': {}, 'increase': {}, 'decrease': {}}
+
+
 
 
 class Game:
     def __init__(self):
-        self.game_state = GameState()  # Instantiate GameState
+        self.game_state = GameState()
         pygame.init()
-        pygame.display.set_caption('Choice-Based Game')
+        pygame.display.set_caption('A Day in the Life of a Developer')
 
         self.screen_width, self.screen_height = (1280, 720)
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height), pygame.RESIZABLE)
@@ -57,40 +59,28 @@ class Game:
         self.game_is_running = True
         self.clock = pygame.time.Clock()
         self.node_history = []
-        self.last_frame = None  # Store the last frame of the video
+        self.last_frame = None
 
-        # Define Nodes
-        self.intro_node = Node("assets/videos/1080p60_3sec.mp4", {"Go to Home": "home_node"})
-        self.home_node = Node("assets/videos/home.mp4", {'Voiceover': 'voiceover_node', 'Long Video': 'longvideo_node',
-                                                         'Picture': 'picture_node', 'Show example': 'example_node',
-                                                         'Quit': 'quit'})
-        self.voiceover_node = Node("assets/videos/voiceover.mp4",
-                                   {"Go to Home": "home_node", 'Show example': 'example_node'})
-        self.longvideo_node = Node("assets/videos/1080p60_2min.mp4",
-                                   {'Voiceover': 'voiceover_node', "Home": 'home_node'})
-        self.picture_node = Node("assets/pictures/icon.jpg", {"Home": "home_node", 'Show example': 'example_node'},
-                                 is_video=False)
-        self.example_node = Node("assets/videos/1080p60_5sec.mp4",
-                                 {'test1': 'test1_node', 'test2': 'test2_node', 'test3': 'test3_node',
-                                  'test4': 'test4_node', 'test6': 'test6_node', 'test7': 'test7_node',
-                                  'Home': 'home_node'})
-        # ... add more nodes as needed ...
+        self.nodes = self.load_nodes_from_json(nodepath)
 
-        self.nodes = {
-            'intro_node': self.intro_node,
-            'home_node': self.home_node,
-            'voiceover_node': self.voiceover_node,
-            'longvideo_node': self.longvideo_node,
-            'picture_node': self.picture_node,  # TODO implement Node which shows a picture only
-            'example_node': self.example_node,
-            # ... add more node references as needed ...
-        }
+        self.current_node = self.nodes['intro_node']
+        self.intro_node = self.nodes['intro_node']  # Define intro_node here
 
-        self.current_node = self.intro_node
-        self.video_played = False  # Track if the current video has been played
+        self.video_played = False
+
+    def load_nodes_from_json(self, json_file):
+        with open(json_file, 'r') as file:
+            data = json.load(file)
+
+        nodes = {}
+        for key, value in data.items():
+            nodes[key] = Node(**value)
+
+        return nodes
 
     def run(self):
         while self.game_is_running:
+            # set energy level
             time_delta = self.clock.tick(60) / 1000.0
 
             for event in pygame.event.get():
@@ -145,47 +135,68 @@ class Game:
                 if node == self.current_node:
                     self.node_history.append(key)
                     break
+        # Neue Logik für GameState-Änderungen
+        node = self.nodes[new_node_key]
+
+        # Überprüfen und Anwenden der 'set' Aktionen
+        if 'set' in node.state_actions:
+            for state_name, value in node.state_actions['set'].items():
+                self.game_state.set_state(state_name, value)
+
+        # Überprüfen und Anwenden der 'increase' Aktionen
+        if 'increase' in node.state_actions:
+            for state_name, value in node.state_actions['increase'].items():
+                self.game_state.increase_state(state_name, value)
+
+        # Überprüfen und Anwenden der 'decrease' Aktionen
+        if 'decrease' in node.state_actions:
+            for state_name, value in node.state_actions['decrease'].items():
+                self.game_state.decrease_state(state_name, value)
 
         self.current_node = self.nodes[new_node_key]
         self.ui_manager.clear_and_reset()
         self.video_played = False
-        # Automatically proceed if there's only one choice and not going back
-        if len(self.current_node.choices) == 1 and not going_back:
-            next_node_key = list(self.current_node.choices.values())[0]
-            self.set_game_state(next_node_key)
-        else:
-            # For picture nodes, show choices immediately
-            if not self.current_node.is_video:
-                self.show_choices(self.current_node.choices)
 
-        if new_node_key == 'example_node' and self.game_state.check_replay_count(self.current_node.media_path, 3):
-            self.nodes[new_node_key].choices['Secret Choice'] = 'secret_node'
-
-        if new_node_key == 'voiceover_node':
-            self.game_state.set_voiceover_played(True)
-
-        if new_node_key == 'example_node' and self.game_state.is_voiceover_played():
-            self.nodes[new_node_key].choices['Additional Voiceover'] = 'additional_voiceover_node'
+        # Remove the automatic redirection for nodes with only one choice
+        # if len(self.current_node.choices) == 1 and not going_back:
+        #     next_node_key = list(self.current_node.choices.values())[0]
+        #     self.set_game_state(next_node_key)
+        # else:
+        if not self.current_node.is_video:
+            # For image nodes, show the choices immediately
+            self.show_choices(self.current_node.choices)
+        # No further action required, wait for video end
 
     def show_choices(self, choices):
-        # Clear existing UI elements
-        self.ui_manager.clear_and_reset()
-
-        screen_width, screen_height = self.screen.get_size()
-        num_buttons = len(choices) + 2 if len(choices) > 1 else len(choices)  # Include Replay and Back buttons
-        button_width = screen_width // num_buttons - 20
+        button_y = self.screen_height - 100
         button_height = 50
-        button_y = screen_height - button_height - 10
-        x_start = (screen_width - (button_width + 20) * num_buttons) // 2  # Center buttons horizontally
+        x_start = 10  # Startposition für Buttons
 
-        # Show the choices buttons
         for choice_text in choices:
-            pygame_gui.elements.UIButton(
-                relative_rect=pygame.Rect((x_start, button_y), (button_width, button_height)),
-                text=choice_text,
-                manager=self.ui_manager
-            )
-            x_start += button_width + 20
+            show_button = True
+
+            if choice_text in self.current_node.conditions:
+                condition_params = self.current_node.conditions[choice_text]
+                if len(condition_params) == 3:
+                    state_name, operator, value = condition_params
+                    if operator == '==':
+                        condition_func = lambda: self.game_state.get_state(state_name) == value
+                    elif operator == '>':
+                        condition_func = lambda: self.game_state.get_state(state_name) > value
+                    elif operator == '<':
+                        condition_func = lambda: self.game_state.get_state(state_name) < value
+                    else:
+                        raise ValueError(f'Invalid operator: {operator}')
+                    show_button = condition_func()
+
+            if show_button:
+                button_width = 200
+                pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect((x_start, button_y), (button_width, button_height)),
+                    text=choice_text,
+                    manager=self.ui_manager
+                )
+                x_start += button_width + 10
 
         # Add "Replay" and "Back" buttons if there are multiple choices
         if len(choices) > 1:
@@ -211,8 +222,12 @@ class Game:
     def play_video_clip(self, video_path):
         try:
             clip = VideoFileClip(video_path)
-            audio_thread = threading.Thread(target=lambda: clip.audio.preview())
-            audio_thread.start()
+
+            if clip.audio is not None:
+                audio_thread = threading.Thread(target=lambda: clip.audio.preview())
+                audio_thread.start()
+            else:
+                audio_thread = None
 
             for frame in clip.iter_frames(fps=60, dtype='uint8'):
                 screen_size = self.screen.get_size()
@@ -234,29 +249,23 @@ class Game:
 
             self.last_frame = frame_surface  # Store the last frame as a surface
             clip.close()
-            audio_thread.join()
-            self.video_played = True  # Mark video as played
-
-            # Check if only one choice is available, then automatically proceed
+            if audio_thread:
+                audio_thread.join()
+            self.video_played = True
             if len(self.current_node.choices) == 1:
                 next_node_key = list(self.current_node.choices.values())[0]
                 self.set_game_state(next_node_key)
             elif len(self.current_node.choices) > 0:
                 self.show_choices(self.current_node.choices)
 
+
         except Exception as e:
             print(f"An error occurred during video playback: {e}")
             sys.exit(1)
+        #print all gamestates and their values
+        print(self.game_state.states)
+
     def replay_current_video(self):
-        # Increase replay count for the current node
-        self.game_state.increase_replay_count(self.current_node.media_path)
-
-        # Check if replay count has reached the threshold
-        if self.game_state.check_replay_count(self.current_node.media_path, 3):
-            # Add the secret choice if not already present
-            if 'Secret Choice' not in self.current_node.choices:
-                self.current_node.choices['Secret Choice'] = 'secret_node'
-
         # Play the video again
         self.video_played = False
         self.display_media(self.current_node.media_path, self.current_node.is_video)
