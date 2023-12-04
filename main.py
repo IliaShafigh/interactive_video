@@ -6,13 +6,14 @@ import threading
 import json
 
 # nodepath = "node.json"
-nodepath = "assets/example/example_nodes.json"
+nodepath = "nodes.json"
 class GameState:
     def __init__(self):
         self.states = {
             'energy': 0,  # Example of a numeric state
             'mood': 0,
-            'alcohol': 0
+            'alcohol': 0,
+            'time': 0
             # Add other states as needed
         }
 
@@ -54,7 +55,9 @@ class Game:
         self.screen_width, self.screen_height = (1280, 720)
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height), pygame.RESIZABLE)
         self.ui_manager = pygame_gui.UIManager((self.screen_width, self.screen_height))
-
+        # add icon in example path
+        icon = pygame.image.load('assets/example/icon.jpg')
+        pygame.display.set_icon(icon)
         self.game_is_running = True
         self.clock = pygame.time.Clock()
         self.node_history = []
