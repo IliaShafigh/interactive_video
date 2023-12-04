@@ -1,0 +1,308 @@
+{
+  "intro_node": {
+    "media_path": "assets/example/intro.mp4",
+    "choices":{"Szene1": "Szene1_node"},
+    "is_video": true
+  },
+  "Szene1_node": {
+    "media_path": "assets/example/szene1.mp4",
+    "choices": {"Zur Uni gehen":  "Szene2_node", "Weiterschlafen":  "Szene20_node"},
+    "state_actions" : {"set": {"mood": 0, "energy": 0}},
+    "is_video": true
+  },
+  "Szene2_node": {
+    "media_path": "assets/example/szene2.mp4",
+    "choices": {"Szene 3": "Szene3_node"},
+    "is_video": true
+  },
+  "Szene2_H_node": {
+    "media_path": "assets/example/szene2.mp4",
+    "choices": {"Szene 3": "Szene3_H_node"},
+    "is_video": true
+  },
+  "Szene2b_node":{
+    "media_path":"assets/example/szene2b.mp4",
+    "choices":{"szene10":"Szene10_node"},
+    "is_video":true
+  },
+  "Szene3_node": {
+    "media_path": "assets/example/szene3.mp4",
+    "choices": {"Nichts essen": "Szene3a_node", "Nuttenfrühstück": "Szene3b_node", "Kochen": "Szene3c_node" },
+    "is_video": true
+  },
+  "Szene3_H_node": {
+    "media_path":"assets/example/szene3.mp4",
+    "choices":{"Lecker Bierchen": "Szene3d.1_H_node","Kochen": "Szene3c_H_node"}
+  },
+  "Szene3a_node": {
+    "media_path": "assets/example/szene3a.mp4",
+    "choices": {"Szene 4": "Szene4_node"},
+    "is_video": true
+  },
+  "Szene3b_node": {
+    "media_path": "assets/example/szene3b.mp4",
+    "choices": {"Szene4": "Szene4_node"},
+    "state_actions": {"increase":  {"mood": 1, "energy":  1}},
+    "is_video": true
+  },
+  "Szene3c_node": {
+    "media_path": "assets/example/szene3c.mp4",
+    "choices": {"Szene9":  "Szene9_node"},
+    "state_actions": {"increase":  {"mood": 2, "energy":  2}},
+    "is_video": true
+  },
+  "Szene3c_H_node": {
+    "media_path": "assets/example/szene3c.mp4",
+    "choices": {"Szene21":  "Szene21_node"},
+    "state_actions": {"increase":  {"mood": 2, "energy":  2}},
+    "is_video": true
+  },
+  "Szene3d.1_H_node": {
+    "media_path": "assets/example/szene3d.mp4",
+    "choices": {"szene3d.2_H": "Szene3d.2_H_node"},
+    "is_video": true
+  },
+  "Szene3d.2_H_node": {
+    "media_path": "assets/example/szene33.mp4",
+    "choices": {"Noch eins!!":"Szene3d.2_H_node", "Aufstehen":"Szene21_node"},
+    "state_actions": {"increase":  {"alcohol": 1}},
+    "is_video": true
+  },
+  "instant_trigger_drunk_Szene21b_node": {
+    "media_path":"assets/example/szene21b.mp4",
+    "choices":{"Quit":"quit"},
+    "instant_trigger": {"alcohol":  4},
+    "state_actions": {"set":{"alcohol":0}},
+    "is_video":true
+},
+  "Szene4_node": {
+    "media_path": "assets/example/szene4.mp4",
+    "choices": {"Szene5":  "Szene5_node"},
+    "is_video": true
+  },
+  "Szene5_node": {
+    "media_path": "assets/example/szene5.mp4",
+    "choices": {"Szene6": "Szene6_node"},
+    "is_video": true
+  },
+  "Szene6_node": {
+    "media_path": "assets/example/szene6.mp4",
+    "choices": {"Reingehen": "Szene7_node", "Rauchen": "Szene6b_node"},
+    "is_video": true
+  },
+  "Szene6b_node": {
+    "media_path": "assets/example/szene6b.mp4",
+    "choices": {"Szene7": "Szene7_node"},
+    "state_actions": {"increase":  {"mood": 1}},
+    "is_video": true
+  },
+  "Szene7_node": {
+    "media_path": "assets/example/szene7.mp4",
+    "choices" : {"Szene12": "Szene12_node"},
+    "is_video": true
+  },
+  "Szene9_node": {
+    "media_path": "assets/example/szene9.mp4",
+    "choices": {"Warten": "Szene9a_node", "Rennen": "Szene9b_node"},
+    "is_video": true
+  },
+  "Szene9a_node": {
+    "media_path":"assets/example/szene9a.mp4",
+    "choices":{"Szene10": "Szene10_node"},
+    "is_video": true
+  },
+  "Szene9b_node": {
+    "media_path":"assets/example/szene9b.mp4",
+    "choices":{"RESTART": "Szene1_node"},
+    "is_video":true
+  },
+  "Szene10_node": {
+    "media_path":"assets/example/szene10.mp4",
+    "choices":{"Szene11": "Szene11_node"},
+    "is_video":true
+  },
+  "Szene11_node": {
+    "media_path":"assets/example/szene11.mp4",
+    "choices":{"Szene12": "Szene12_node"},
+    "is_video":true
+  },
+  "Szene12_node": {
+    "media_path":"assets/example/szene12.mp4",
+    "choices":{"Aufpassen": "Szene13_node", "Einpennen": "Szene14_node"},
+    "is_video":true
+  },
+  "Szene13_node" : {
+    "media_path":"assets/example/szene13.mp4",
+    "choices":{"Szene16":"Szene16_node"},
+    "conditions": {
+      "energy == 1": ["energy", "==", 1],
+      "energy > 1": ["energy", ">", 1]
+    },
+    "state_actions":{"decrease": {"energy": 1}},
+    "is_video":true
+  },
+  "Szene14_node": {
+    "media_path":"assets/example/szene14.mp4",
+    "choices":{"Szene16": "Szene16_node"},
+    "conditions":{
+      "energy < 1": ["energy", "<", 1]
+    },
+    "state_actions":{
+      "increase":{"energy":1},
+      "decrease":{"mood":1}
+    },
+    "is_video":true
+  },
+  "Szene16_node": {
+    "media_path":"assets/example/szene15.mp4",
+    "choices":{"normal laufen": "Szene17_node", "Ausrutschen": "Szene17b_node"},
+    "is_video":true
+  },
+  "Szene17_node": {
+    "media_path":"assets/example/szene17.mp4",
+    "choices":{"Szene18": "Szene18_node"},
+    "conditions":{
+      "energy == 1": ["energy", "==", 1],
+      "energy > 1": ["energy", ">", 1]
+    },
+    "is_video":true
+  },
+  "Szene17b_node" :{
+    "media_path":"assets/example/szene17b.mp4",
+    "choices":{"RESTART":"Szene1_node"},
+    "conditions":{
+      "energy < 1": ["energy", "<", 1]
+    },
+    "is_video":true
+  },
+  "Szene18_node": {
+    "media_path":"assets/example/szene18.mp4",
+    "choices":{"Sorry": "Szene19_node", "Stress": "Szene19b_node"},
+    "is_video":true
+  },
+  "Szene19_node": {
+    "media_path":"assets/example/szene19.mp4",
+    "choices":{"Szene31": "Szene31_node"},
+    "is_video":true
+  },
+  "Szene19b_node": {
+    "media_path":"assets/example/szene19b.mp4",
+    "choices":{"RESTART":"Szene1_node"},
+    "conditions":{
+      "mood < 1": ["mood", "<", 1]
+    },
+    "is_video":true
+  },
+  "Szene20_node": {
+    "media_path":"assets/example/szene20.mp4",
+    "choices":{"Zur Uni gehen":"Szene2b_node", "Zuhause hängen":"Szene2_H_node"},
+    "state_actions":{"increase":{"energy":1}},
+    "is_video":true
+  },
+  "Szene21_node": {
+    "media_path":"assets/example/szene21.mp4",
+    "choices":{"Hung Anrufen":"Szene22_node", "Elian Anrufen": "Szene24_node", "Zocken":"Szene29_node", "Gym?":"Szene27_node"},
+    "is_video":true
+  },
+  "Szene23_node": {
+    "media_path":"assets/example/szene22.mp4",
+    "choices":{"Szene31": "Szene31_node"},
+    "is_video":true
+  },
+  "Szene24_node": {
+    "media_path":"assets/example/szene24nosoundeffects.mp4",
+    "choices":{"Szene25":"Szene25_node"},
+    "is_video":true
+  },
+  "Szene25_node": {
+    "media_path":"assets/example/szene25.mp4",
+    "choices":{"Whisky":"Szene25a_node","Nase Pudern":"Szene25b_node", "Reinhauen":"Szene26_node"},
+    "state_actions":{"increase":{"time":1}},
+    "is_video":true
+  },
+  "Szene25a_node": {
+    "media_path":"assets/example/szene25b.mp4",
+    "choices":{"Szene25":"Szene25_node"},
+    "is_video": true
+  },
+  "Szene25b_node": {
+    "media_path":"assets/example/szene25a.mp4",
+    "choices":{"Szene25":"Szene25_node"},
+    "is_video": true
+  },
+  "Szene26_node": {
+    "media_path":"assets/example/szene26.mp4",
+    "choices":{"Szene32": "Szene32_node"},
+    "conditions":{
+      "time == 3": ["time", "==", 3],
+      "time > 3": ["time", ">", 3]
+    },
+    "is_video":true
+  },
+  "Szene27_node": {
+    "media_path":"assets/example/szene27.mp4",
+    "choices":{"Heute nicht so": "Szene28_node", "Niemals!":"Szene28_node", "SPORT IST MORD":"Szene28_node"},
+    "is_video":true
+  },
+  "Szene28_node": {
+    "media_path":"assets/example/szene28.mp4",
+    "choices":{"Szene21":"Szene21_node"},
+    "is_video":true
+  },
+  "Szene29_node": {
+    "media_path":"assets/example/szene29.mp4",
+    "choices":{"Valorant":"Szene29a_node","Spider-Man":"Szene29b_node","Schlafen gehen":"Szene32_node"},
+    "conditions":{
+      "mood > -2": ["mood", ">", -2]
+    },
+    "is_video":true
+  },
+  "Szene29a_node": {
+    "media_path":"assets/example/szene29a.mp4",
+    "choices":{"Szene29":"szene29_node"},
+    "state_actions":{
+      "increase":{"time":1},
+      "decrease":{"mood":1}
+    },
+    "is_video":true
+  },
+  "Szene29b_node": {
+    "media_path":"assets/example/szene29b.mp4",
+    "choices":{"Szene29":"szene29_node"},
+    "state_actions":{
+      "increase":{"time":1,"mood":1}
+    },
+    "is_video":true
+  },
+  "instant_trigger_Szene29c_node": {
+    "media_path":"assets/example/szene29c.mp4",
+    "choices":{"Quit": "quit"},
+    "instant_trigger": {"time":5},
+    "state_actions":{"set":{"time":0}},
+    "is_video":true
+  },
+  "instant_trigger_Szene30b_node": {
+    "media_path":"assets/example/szene30b.mp4",
+    "choices":{"Quit": "quit"},
+    "instant_trigger":{"mood":-3},
+    "state_actions":{"set":{"mood":0}},
+    "is_video":true
+  },
+  "Szene31_node": {
+    "media_path":"assets/example/szene31.mp4",
+    "choices":{"Szene32":"Szene32_node"},
+    "is_video":true
+  },
+  "Szene32_node": {
+    "media_path": "assets/example/szene32.mp4",
+    "choices":{"Ende": "intro_node"},
+    "is_video":true
+  },
+
+
+  "quit": {
+    "media_path": "",
+    "choices": {},
+    "is_video": false
+  }
+}
